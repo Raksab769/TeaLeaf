@@ -1,0 +1,12 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /weighmentRecords/{recordId} {
+      allow read, write: if request.auth != null
+        && request.auth.token.email in [
+          'baskar3797@gmail.com',
+          'nvinith49@gmail.com'
+        ];
+    }
+  }
+}

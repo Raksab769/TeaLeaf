@@ -3,90 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#174a37">
-  <title>Sign in | Jai Hanuman Tea Leaf Agency</title>
-  <style>
-    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#1d2b24;background:#f5f8f5;font-synthesis:none}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 10% 12%,#e0efe2,transparent 35%),#f5f8f5}
-    main{width:min(100%,440px);padding:32px;background:#fff;border:1px solid #e5ebe6;border-radius:18px;box-shadow:0 18px 50px #1b37251a}
-    h1{margin:0 0 8px;color:#123b2d;font-size:25px}p{color:#718078;line-height:1.55}.field{margin:18px 0}label{display:block;margin-bottom:7px;font-size:14px;font-weight:650}input{width:100%;height:46px;padding:0 12px;border:1px solid #dfe7e1;border-radius:9px;font:inherit}input:focus{outline:3px solid #24734f22;border-color:#24734f}
-    button,.app-link{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:0 16px;border:0;border-radius:9px;background:#18563d;color:#fff;font:inherit;font-weight:700;text-decoration:none;cursor:pointer}button:disabled{opacity:.65;cursor:wait}.secondary{background:#e8f3ec;color:#18563d;margin-left:8px}.status{min-height:24px;margin:14px 0 0;font-size:14px}.error{color:#a3322d}.signed-in{padding:14px;background:#e8f3ec;border-radius:10px}.hidden{display:none!important}
-  </style>
+  <meta http-equiv="refresh" content="0; url=./index.html">
+  <title>Agency sign in</title>
 </head>
 <body>
-  <main>
-    <h1>Agency sign in</h1>
-    <p>Sign in with an authorized agency account to use the billing app and access saved records.</p>
-    <form id="login-form" autocomplete="on">
-      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="username" required></div>
-      <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
-      <button id="sign-in" type="submit">Sign in</button>
-    </form>
-    <p id="status" class="status" role="status" aria-live="polite"></p>
-    <section id="session" class="signed-in hidden" aria-live="polite">
-      <p>Signed in as <strong id="signed-in-email"></strong>.</p>
-      <a class="app-link" href="./index.html">Open billing and records</a>
-      <button class="secondary" id="sign-out" type="button">Sign out</button>
-    </section>
-  </main>
-  <script type="module">
-    import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-    import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-
-    const firebaseConfig={apiKey:'AIzaSyBp5pCa88ebz3YgbVQKJYeeb-RW0ODwGI',authDomain:'jai-hanuman-tea-leaf.firebaseapp.com',projectId:'jai-hanuman-tea-leaf',storageBucket:'jai-hanuman-tea-leaf.appspot.com',messagingSenderId:'1074512901789',appId:'1:1074512901789:web:1df9858e2526d9c49a0674',measurementId:'G-K3B0E085D4'};
-    const allowedEmails=new Set(['baskar3797@gmail.com','nvinith49@gmail.com']);
-    const auth=getAuth(initializeApp(firebaseConfig));
-    const form=document.getElementById('login-form');
-    const status=document.getElementById('status');
-    const session=document.getElementById('session');
-    const signInButton=document.getElementById('sign-in');
-    const emailInput=document.getElementById('email');
-    const passwordInput=document.getElementById('password');
-
-    function showSession(user){
-      const email=(user.email||'').toLowerCase();
-      if(!allowedEmails.has(email)){
-        status.textContent='This account is not authorized.';
-        status.className='status error';
-        signOut(auth);
-        return;
-      }
-      document.getElementById('signed-in-email').textContent=email;
-      session.classList.remove('hidden');
-      form.classList.add('hidden');
-      status.textContent='';
-      status.className='status';
-    }
-
-    onAuthStateChanged(auth,user=>{
-      if(user) showSession(user);
-      else {session.classList.add('hidden');form.classList.remove('hidden');}
-    });
-
-    form.addEventListener('submit',async event=>{
-      event.preventDefault();
-      status.textContent='Signing in…';
-      status.className='status';
-      signInButton.disabled=true;
-      try{
-        const credential=await signInWithEmailAndPassword(auth,emailInput.value.trim(),passwordInput.value);
-        if(!allowedEmails.has((credential.user.email||'').toLowerCase())){
-          await signOut(auth);
-          throw new Error('This account is not authorized.');
-        }
-        passwordInput.value='';
-        showSession(credential.user);
-      }catch(error){
-        status.textContent=error.message==='This account is not authorized.'?error.message:'Sign-in failed. Check your email and password, then try again.';
-        status.className='status error';
-      }finally{signInButton.disabled=false;}
-    });
-
-    document.getElementById('sign-out').addEventListener('click',async()=>{
-      await signOut(auth);
-      status.textContent='You have signed out.';
-      status.className='status';
-    });
-  </script>
+  <p>Opening agency sign in… <a href="./index.html">Continue</a></p>
 </body>
 </html>
