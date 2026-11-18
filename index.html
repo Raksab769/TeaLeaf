@@ -50,7 +50,7 @@
     import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut,sendPasswordResetEmail} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
     import {addDoc,collection,getFirestore,onSnapshot,orderBy,query,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    const config={apiKey:'AIzaSyBp5pCa88ebz3YgbVQKJYeeb-RW0ODwGI',authDomain:'jai-hanuman-tea-leaf.firebaseapp.com',projectId:'jai-hanuman-tea-leaf',storageBucket:'jai-hanuman-tea-leaf.appspot.com',messagingSenderId:'1074512901789',appId:'1:1074512901789:web:1df9858e2526d9c49a0674',measurementId:'G-K3B0E085D4'};
+    const config={apiKey:'AIzaSyBp5pCa88ebz3YgbVQKJYeeb-RW0ODwGI',authDomain:'jai-hanuman-tea-leaf.firebaseapp.com',projectId:'jai-hanuman-tea-leaf',storageBucket:'jai-hanuman-tea-leaf.firebasestorage.app',messagingSenderId:'1074512901789',appId:'1:1074512901789:web:1df9858e2526d9c49a0674',measurementId:'G-K3B0E085D4'};
     const allowed=new Set(['baskar3797@gmail.com','nvinith49@gmail.com']);
     const firebase=initializeApp(config),auth=getAuth(firebase),db=getFirestore(firebase),recordsRef=collection(db,'weighmentRecords');
     const $=id=>document.getElementById(id),form=$('record-form'),loginForm=$('login-form'),recordsBody=$('records-body');
