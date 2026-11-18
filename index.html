@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Leaf Weighment Billing</title>
+    <style>
+        /* General Web UI Styling */
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="number"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .readonly-field { background-color: #e9ecef; font-weight: bold; font-size: 1.2em; color: #d9534f; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-print { background-color: #007bff; color: white; }
+        .btn-save { background-color: #28a745; color: white; }
+
+        /* Print-Specific Styling (Triggered only when printing) */
+        @media print {
+            body { background: none; padding: 0; }
+            .container { box-shadow: none; border: 1px solid #000; max-width: 400px; padding: 10px; }
+            .btn-group, h2 { display: none; } /* Hide buttons and header on paper */
+            input { border: none; border-bottom: 1px dashed #000; padding: 2px; }
+            .readonly-field { background: none; color: #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="receipt-area">
+    <h2>Jai Hanuman Tea Leaf Agency</h2>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="form-group" style="flex: 1;">
+            <label>S.No.</label>
+            <input type="text" id="serialNumber" placeholder="e.g., 219">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>Date</label>
+            <input type="date" id="dateField">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Farmer Name</label>
+        <input type="text" id="farmerName" placeholder="Enter name">
+    </div>
+
+    <div class="form-group">
+        <label>Gross Weight (kg)</label>
+        <input type="number" id="grossWeight" class="calc-input" placeholder="0">
+    </div>
+
+    <div class="form-group">
+        <label>Tare (kg)</label>
+        <input type="number" id="tareWeight" class="calc-input" placeholder="0">
+    </div>
+
+    <div class="form-group">
+        <label>Water / Deduction</label>
+        <input type="number" id="waterDeduction" class="calc-input" placeholder="0">
+    </div>
+
+    <div class="form-group">
+        <label>Total Net Weight (kg)</label>
+        <input type="number" id="totalWeight" class="readonly-field" readonly>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-print" onclick="window.print()">Print Slip</button>
+        <button class="btn-save" onclick="saveToDatabase()">Save to Database</button>
+    </div>
+</div>
+
+<script>
+    // 1. Auto-fill today's date
+    document.getElementById('dateField').valueAsDate = new Date();
+
+    // 2. Real-time Calculation Logic
+    const calcInputs = document.querySelectorAll('.calc-input');
+    
+    calcInputs.forEach(input => {
+        input.addEventListener('input', calculateTotal);
+    });
+
+    function calculateTotal() {
+        const gross = parseFloat(document.getElementById('grossWeight').value) || 0;
+        const tare = parseFloat(document.getElementById('tareWeight').value) || 0;
+        const water = parseFloat(document.getElementById('waterDeduction').value) || 0;
+        
+        const total = gross - tare - water;
+        
+        // Ensure total doesn't go below 0
+        document.getElementById('totalWeight').value = total > 0 ? total : 0;
+    }
+
+    // 3. Database Save Trigger
+    function saveToDatabase() {
+        const transactionData = {
+            serialNumber: document.getElementById('serialNumber').value,
+            date: document.getElementById('dateField').value,
+            farmerName: document.getElementById('farmerName').value,
+            gross: parseFloat(document.getElementById('grossWeight').value),
+            tare: parseFloat(document.getElementById('tareWeight').value),
+            water: parseFloat(document.getElementById('waterDeduction').value),
+            netTotal: parseFloat(document.getElementById('totalWeight').value)
+        };
+
+        console.log("Data ready to push:", transactionData);
+        alert("Transaction logged in console. Ready to connect to backend!");
+        
+        // Clear inputs after save
+        document.getElementById('grossWeight').value = '';
+        document.getElementById('tareWeight').value = '';
+        document.getElementById('waterDeduction').value = '';
+        document.getElementById('totalWeight').value = '';
+        // Auto-increment S.No could be added here
+    }
+</script>
+
+</body>
+</html>
