@@ -72,8 +72,29 @@
     loginForm.addEventListener('submit',async e=>{e.preventDefault();const button=$('login-button');button.disabled=true;$('login-status').textContent='Signing in…';$('login-status').className='status';try{const result=await signInWithEmailAndPassword(auth,val('email'),$('password').value);if(!allowed.has((result.user.email||'').toLowerCase())){await signOut(auth);throw Object.assign(new Error('Unauthorized account'),{code:'app/unauthorized'});}$('password').value='';}catch(err){console.error('Firebase sign-in failed',err);$('login-status').textContent=err.code==='app/unauthorized'?'This email is not on the authorized list.':authMessage(err);$('login-status').className='status error';}finally{button.disabled=false;}});
     $('reset-password').addEventListener('click',async()=>{const email=val('email');if(!email){$('login-status').textContent='Enter your email first, then choose Reset password.';$('login-status').className='status error';return;}try{await sendPasswordResetEmail(auth,email);$('login-status').textContent='Password reset email sent if the account exists.';$('login-status').className='status success';}catch(err){console.error('Password reset failed',err);$('login-status').textContent=authMessage(err);$('login-status').className='status error';}});
     $('logout').addEventListener('click',()=>signOut(auth));
+    const INACTIVITY_LIMIT_MS = 20 * 60 * 1000;
+let inactivityTimer;
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimer);
+  if (auth.currentUser) {
+    inactivityTimer = setTimeout(async () => {
+      await signOut(auth);
+      window.location.reload();
+    }, INACTIVITY_LIMIT_MS);
+  }
+}
+
+['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(eventName => {
+  window.addEventListener(eventName, resetInactivityTimer, {passive: true});
+});
     onAuthStateChanged(auth,user=>{if(unsubscribeRecords){unsubscribeRecords();unsubscribeRecords=null;}records=[];if(user&&allowed.has((user.email||'').toLowerCase())){$('login').classList.add('hidden');$('app').style.display='block';$('logout').classList.remove('hidden');$('user-label').textContent=user.email;$('user-label').classList.remove('hidden');$('database-status').textContent='Loading saved records…';$('database-status').className='status';const q=query(recordsRef,orderBy('createdAt','desc'));unsubscribeRecords=onSnapshot(q,snapshot=>{records=snapshot.docs.map(d=>({id:d.id,...d.data()}));$('database-status').textContent='Connected. Saved records are up to date.';$('database-status').className='status success';render();},err=>{console.error('Firestore read failed',err);$('database-status').textContent='Unable to load records. Publish the provided Firestore rules for the two authorized accounts.';$('database-status').className='status error';});}else{if(user)signOut(auth);$('app').style.display='none';$('login').classList.remove('hidden');$('logout').classList.add('hidden');$('user-label').classList.add('hidden');recordsBody.innerHTML='<tr><td colspan="10">Sign in to load records.</td></tr>';$('record-count').textContent='';}});
     updatePreview();
+    onAuthStateChanged(auth, user => {
+  clearTimeout(inactivityTimer);
+  if (user) resetInactivityTimer();
+  // keep the rest of the existing authorized-user logic
+});
   </script>
 </body>
 </html>
